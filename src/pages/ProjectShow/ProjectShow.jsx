@@ -12,12 +12,12 @@ import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
 import { Link } from "react-router-dom";
 function ProjectShow() {
-
-  const { id } = useParams();
+    const { id } = useParams();
   const navigate = useNavigate();
   const project = useSelector((state) => state.projectReducer);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.myDetailsReducer);
+  const constants=useSelector((state)=>(state.constantReducer));
 
   const handleAccept = (e, d_id) => {
     e.preventDefault();
@@ -36,8 +36,6 @@ function ProjectShow() {
                 <h3 className="mt-3 mb-0 fw-bold mb-3">{p?.title}</h3>
                 <div className="fw-bold">
                   <span>{p?.createdBy?.department}</span>
-                  <span className=" mx-3">•</span>
-                  <span>IT</span>
                 </div>
                 <div className=" mt-3 d-flex justify-content-start align-items-center">
                   <h5 className="pt-2 ">
@@ -106,7 +104,7 @@ function ProjectShow() {
               </div>
             </div>
 
-            {p.createdBy._id ==user?.data?._id && p.project_status === "created" && 
+            {p.createdBy._id ==user?.data?._id && p.project_status !== "created" && 
               <div className="p-3">
                 <div className="fs-4 mt-4 fw-bold">Applicant</div>
                 <div>
@@ -145,7 +143,6 @@ function ProjectShow() {
                                     <div className="col-6">
                                     <span className="bg-danger p-2 rounded">
                                       <img src={decline} alt="" height="20px" />
-
                                     </span>
                                     </div>
                                   </div>
@@ -156,15 +153,13 @@ function ProjectShow() {
                         </div>
                       </div>
                     </div>
-                    
                   ))}
-            
                   </div>
                 </div>
               </div>
           }
-          {p?.project_status!='created' || p?.project_status=='pending-admin' || p?.project_status!="pending-user" || p?.project_status!="completed" && 
-          p?.createdBy?._id==user?.data?._id || p.developer?._id==user?.data?._id &&
+          {(p?.project_status==='assigned' || p?.project_status==='partial' || p.project_status==='testing') && 
+          (p?.createdBy?._id==user?.data?._id || p.developer?._id==user?.data?._id )&&
               <div className="card mt-3 mb-5 shadow">
                 <div className="card-body">
                   <div className="p-3">
@@ -177,13 +172,10 @@ function ProjectShow() {
                       key={p?._id}
                       deadline={moment(p?.end_date).fromNow()}
                     />
-
                     </div>
                   </div>
               </div>
             }
-          
-            
           </div>
         ))}
     </div>
