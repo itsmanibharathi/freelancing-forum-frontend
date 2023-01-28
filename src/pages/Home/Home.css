@@ -107,9 +107,8 @@
     border-radius: 20px;
     border-radius: 12px;
     scroll-behavior: auto;
-    overflow-y: scroll;
+    /* overflow-y: hidden; */
     overflow-x: hidden;
-    height: 400px;
 }
 .notifications-header{
     height: 40px;

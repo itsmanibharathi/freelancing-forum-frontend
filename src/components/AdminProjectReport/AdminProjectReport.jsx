@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import './AdminProjectReport.scss'
@@ -18,14 +18,13 @@ const AdminProjectReport = () => {
   const [table,setTable]=useState(false)
   const reportTableRef = useRef(null)
   const navigate = useNavigate()
- 
+  const setDeptData = ()=>{
+    const dept = constants.data[0].dept_short;
+    setDepts([...dept])
+  }
 
   useEffect(()=>{
     if(constants && constants.data){
-       const setDeptData = ()=>{
-        const dept = constants.data[0].dept_short;
-        setDepts([...dept])
-      }
       setDeptData();
     }
   },[constants])
@@ -38,73 +37,66 @@ const AdminProjectReport = () => {
     e.preventDefault();
     setTable(true)
   }
- 
-
-
+  const filterByFromDate=()=>{
+      const data=projects.filter(p => p.created_on >= fromdate )
+      setProjects([...data])
+  }
+  const filterByEndDate = ()=>{
+      const data = projects.filter(p => p.created_on <= endDate)
+      setProjects([...data])
+  }
+  const filterByStatus = ()=>{
+      const data = projects.filter(p=>p.project_status==status)
+      setProjects([...data])
+  }
+  const filterByClientDept = ()=>{
+    const data = projects.filter(p => p.createdBy.department == clientDept)
+    setProjects([...data])
+  }
+  const filterByFreelanceDept = () =>{
+      const data = projects.filter(p => p?.developer?.department==freelancerDept)
+      setProjects([...data])
+  }
   useEffect(()=>{
-      if(fromdate!==null){
-         const filterByFromDate=()=>{
-           const data=projects.filter(p => p.created_on >= fromdate )
-            setProjects([...data])
-        }
+      if(fromdate!=null)
         filterByFromDate();
-      }
-  },[fromdate,projects])
+  },[fromdate])
 
   useEffect(()=>{
-    if(endDate!==null){
-        const filterByEndDate = ()=>{
-          const data = projects.filter(p => p.created_on <= endDate)
-          setProjects([...data])
-      }
+    if(endDate!=null)
       filterByEndDate();
-    }
-  },[endDate,projects])
+  },[endDate])
 
   useEffect(()=>{
-      if(status==='created'){
+      if(status=='created'){
         setFreelance(false);
         setClient(true)
       }else{
         
         setFreelance(true)
       }
-      if(status!=='all'){
-        const filterByStatus = ()=>{
-          const data = projects.filter(p=>p.project_status===status)
-            setProjects([...data])
-       }
+      if(status!='all')
+
         filterByStatus();
-      }
-  },[status,projects])
+  },[status])
 
   useEffect(()=>{
-      if(clientDept!==null && clientDept!=='all'){
+      if(clientDept!=null && clientDept!='all'){
         setFreelance(false)
-                
-        const filterByClientDept = ()=>{
-          const data = projects.filter(p => p.createdBy.department === clientDept)
-          setProjects([...data])
-        }
         filterByClientDept();
       }else{
         setFreelance(true)
       }
-  },[clientDept,projects])
+  },[clientDept])
 
   useEffect(()=>{
-      if(freelancerDept!==null && freelancerDept!=='all'){
+      if(freelancerDept!=null && freelancerDept!='all'){
         setClient(false)
-        
-        const filterByFreelanceDept = () =>{
-            const data = projects.filter(p => p?.developer?.department===freelancerDept)
-            setProjects([...data])
-        }
         filterByFreelanceDept();
       }else{
         setClient(true)
       }
-  },[freelancerDept,projects])
+  },[freelancerDept])
 
   useEffect(()=>{
     if(project && project.data){
@@ -141,7 +133,7 @@ const AdminProjectReport = () => {
                         ))}
                       </select>
                     </div>
-                    {client===true &&
+                    {client==true &&
                      <div className="col-4 my-3">
                       <label className="form-label">Client Department(choose any one)</label>
                       <select onChange={e=>setClientDept(e.target.value)} className='form-select'>
@@ -152,7 +144,7 @@ const AdminProjectReport = () => {
                       </select>
                     </div>
                     }
-                    {freelance===true &&
+                    {freelance==true &&
                     <div className="col-4 my-3">
                       <label className="form-label">Freelancer Department(choose any one)</label>
                       <select onChange={e=>setFreelancerDept(e.target.value)} className='form-select'>
@@ -194,7 +186,7 @@ const AdminProjectReport = () => {
             </tr>
           </thead>
           <tbody>
-            {projects === null || projects.length === 0 ?
+            {projects == null || projects.length == 0 ?
               <tr >
                 <td className='py-5 fw-bold' colSpan="6">No User Found</td>
               </tr> : 

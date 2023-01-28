@@ -6,12 +6,13 @@ import Notification from '../../components/homepage/Notification'
 import ProjectCard from "../../components/ProjectCard/ProjectCard";
 import ProfileCard from "../../components/ProfileCard/ProfileCard";
 import {Link,useNavigate} from 'react-router-dom'
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useEffect } from "react"
 import moment from "moment";
 import starColor from "../../assets/Color-star.png";
 import starDull from "../../assets/dull-star.png";
 import Footer from "../../components/Footer/Footer";
+import { setAlert } from "../../actions/alert";
 
 
 function Home() {
@@ -103,7 +104,7 @@ function Home() {
                       <div className="current-project-title my-2 me-4" key={p._id}>
                         <p className="mb-0 ms-2"><Link to={`/project/show/${p._id}`}>{p.title}</Link></p>
                         <div className="d-flex justify-content-between">
-                          <p className="mb-0 ms-2">{p.createdBy===myself.data?._id?('Provided '):(`End on: ${moment(p.end_date).fromNow()}`)}</p>
+                          <p className="mb-0 ms-2">{p.createdBy==myself.data?._id?('Provided '):(`End on: ${moment(p.end_date).fromNow()}`)}</p>
                           <p className="mb-0 ms-2">Status : {p.project_status}</p>
                         </div>
                         <hr className='mt-1 ms-2' />
@@ -122,10 +123,8 @@ function Home() {
             {/* <Notification /> */}
             {notification.length!==0 ?
               <>
-                {[0,1,2].map(n=>(
-                  <div key={n} className="shadow m-3">
-                      <Notification notification={n} key={n} />
-                  </div>  
+                {notification.map(n=>(
+                  <Notification notification={n} key={n._id} />
                 ))}
               </>
 
@@ -161,7 +160,7 @@ function Home() {
             users.data !== null &&
               users.data
               .sort((a,b) => {return a.rating >b.rating ? -1 : 1})
-              .slice(0,users.data.length > 10 ? 10 : users.data.length)?.filter(u=> u.admin_verify===true).map(u=>(
+              .slice(0,users.data.length > 10 ? 10 : users.data.length)?.filter(u=> u.admin_verify==true).map(u=>(
                 <ProfileCard user={u} key={u._id} constant={constants?.data[0]}/>
               ))
           }

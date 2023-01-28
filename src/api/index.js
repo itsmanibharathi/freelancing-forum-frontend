@@ -1,7 +1,7 @@
 import axios from 'axios'
 import App from '../App'
 
-const API = axios.create({baseURL:'http://localhost:8080/'})
+const API = axios.create({baseURL:'http://localhost:8080/api'})
 
 //authentication
 export const login = (authData) => API.post('/user/login',authData)
